@@ -7,11 +7,11 @@
 
 void printDatabase(const struct Employee* employees, int numEmployees) {
     printf("NAME\t\tSALARY\t\tID\n");
-    printf("---------------------------------------------------------------\n");
+    printf("-------------------------------------------------------------\n");
     for (int i = 0; i < numEmployees; i++) {
         printf("%s %s\t%d\t\t%d\n", employees[i].first_name, employees[i].last_name, employees[i].salary, employees[i].id);
     }
-    printf("---------------------------------------------------------------\n");
+    printf("-------------------------------------------------------------\n");
     printf("Number of Employees (%d)\n", numEmployees);
 }
 
@@ -88,12 +88,24 @@ void addEmployee(struct Employee* employees, int* numEmployees) {
 
     // Prompt for and validate the salary
     do {
+        float float_salary;
         printf("Enter employee's salary (%d to %d): ", MIN_SALARY, MAX_SALARY);
-        if (scanf("%d", &newEmployee.salary) != 1 || newEmployee.salary < MIN_SALARY || newEmployee.salary > MAX_SALARY) {
+
+        scanf("%f", &float_salary); // Read the float from the user and store it in 'number'
+
+        if (float_salary != (int)float_salary){
+            printf("Float is not allowed. Please enter a valid salary.\n");
+            while (getchar() != '\n'); // Clear the input buffer
+            continue;
+        } 
+
+        newEmployee.salary = float_salary;
+
+        if (newEmployee.salary < MIN_SALARY || newEmployee.salary > MAX_SALARY) {
             printf("Invalid input. Please enter a valid salary.\n");
             while (getchar() != '\n'); // Clear the input buffer
         }
-    } while (newEmployee.salary < MIN_SALARY || newEmployee.salary > MAX_SALARY);
+    } while (newEmployee.salary < MIN_SALARY || newEmployee.salary > MAX_SALARY );
 
     // Find the next available ID
     int nextId = MIN_ID;
@@ -107,9 +119,9 @@ void addEmployee(struct Employee* employees, int* numEmployees) {
     int confirm;
 
     do {
-        printf("Do you want to add the following employee to the DB?\n");
+        printf("Do you want to add the following below employee to the DB?\n");
         printf("\t%s %s, salary: %d\n", newEmployee.first_name, newEmployee.last_name, newEmployee.salary);
-        printf("Enter 1 for yes, 0 for no: ");
+        printf("Enter 1 for YES, 0 for NO: ");
 
         if (scanf("%d", &confirm) != 1 || (confirm != 0 && confirm != 1)) {
             printf("Invalid input. Please enter 0 or 1.\n");

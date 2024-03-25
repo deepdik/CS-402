@@ -1,7 +1,7 @@
 #ifndef EMPLOYEE_H
 #define EMPLOYEE_H
 
-#define MAX_NAME_LENGTH 65
+#define MAX_NAME_LENGTH 64
 #define MIN_ID 100000
 #define MAX_ID 999999
 #define MIN_SALARY 30000
