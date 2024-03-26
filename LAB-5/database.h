@@ -10,4 +10,4 @@ void lookupById(const struct Employee* employees, int numEmployees);
 void lookupByLastName(const struct Employee* employees, int numEmployees);
 void addEmployee(struct Employee* employees, int* numEmployees);
 
-#endif // DATABASE_H
+#endif
