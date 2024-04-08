@@ -12,4 +12,5 @@ To run the build file use below command:
 ```bash
 # <build file name> <input data file name>
 ./basicstats small.txt
+./basicstats large.txt
 ```
