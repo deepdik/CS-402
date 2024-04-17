@@ -30,9 +30,11 @@ void printResults(int numVals, int capacity, double mean, double median, double 
     printf("      mean:        %.3f\n", mean);
     printf("    median:        %.3f\n", median);
     printf("    stddev:        %.3f\n", stddev);
+    printf("  geometric mean:  %.3f\n", geometricMean);
+    printf("  harmonic mean:   %.3f\n", harmonicMean);
 
-   if (numModes == 0) {
-    printf(" mode: (0.000) All values are unique so no mode found.\n");
+   if (modes == NULL || numModes == 0) {
+    printf(" mode: No Mode Found\n");
     } else {
     printf(" mode(s):");
     int isInteger = 1; // Flag to track if all modes are integers
@@ -47,17 +49,14 @@ void printResults(int numVals, int capacity, double mean, double median, double 
         }
 
         if (isInteger) {
-            printf(" %ld", (long)mode); // Print as integer
+            printf(" %ld,", (long)mode); // Print as integer
         } else {
-            printf(" %.3f", mode); // Print as float with 3 decimal places
+            printf(" %.3f,", mode); // Print as float with 3 decimal places
         }
     }
 
     printf("\n");
 }
-
-    printf("  geometric mean:  %.3f\n", geometricMean);
-    printf("  harmonic mean:   %.3f\n", harmonicMean);
     printf("Unused array capacity: %d\n", capacity - numVals);
 }
 
@@ -90,31 +89,6 @@ double calculateStandardDeviation(const double *data, int numVals, double mean) 
 }
 
 
-/**
- * @brief Checks if all values in the dataset are unique.
- *
- * This function iterates through the array of doubleing-point values to determine if all values are unique.
- * It compares each pair of values in the dataset. If it finds any two values that are equal, it immediately
- * returns false, indicating that not all values in the dataset are unique. If no equal values are found
- * after checking all pairs, it returns true, indicating that all values are unique.
- *
- * @param data Pointer to the array of doubleing-point values.
- * @param numVals Number of values in the array.
- *
- * @return true if all values in the dataset are unique, false otherwise.
- */
-bool allValuesUnique(const double *data, int numVals) {
-    for (int i = 0; i < numVals - 1; i++) {
-        for (int j = i + 1; j < numVals; j++) {
-            if (data[i] == data[j]) {
-                // If two equal values are found, return false
-                return false;
-            }
-        }
-    }
-    // If no equal values are found, return true
-    return true;
-}
 
 
 /**
@@ -155,6 +129,34 @@ double calculateMedian(double *data, int numVals) {
 }
 
 
+
+
+
+/**
+ * @brief Checks if all values in the dataset are unique.
+ *
+ * This function iterates through the array of doubleing-point values to determine if all values are unique.
+ * It compares each pair of values in the dataset. If it finds any two values that are equal, it immediately
+ * returns false, indicating that not all values in the dataset are unique. If no equal values are found
+ * after checking all pairs, it returns true, indicating that all values are unique.
+ *
+ * @param data Pointer to the array of doubleing-point values.
+ * @param numVals Number of values in the array.
+ *
+ * @return true if all values in the dataset are unique, false otherwise.
+ */
+
+bool allValuesUnique(const double *data, int numVals) {
+    for (int i = 0; i < numVals - 1; i++) {
+        for (int j = i + 1; j < numVals; j++) {
+            if (data[i] == data[j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 /**
  * @brief Computes the mode(s) of the data.
  *
@@ -171,104 +173,83 @@ double calculateMedian(double *data, int numVals) {
  *
  * @return Pointer to the array containing the mode(s) if mode(s) exist, NULL otherwise.
  */
-// double *calculateMode(const double *data, int numVals, int *numModes) {
-//     // Check if the dataset is empty or if all values are unique
-//     if (numVals == 0 || allValuesUnique(data, numVals)) {
-//         *numModes = 0;
-//         return NULL;  // No mode for an empty set or when all values are unique
-//     }
-
-//     int maxStreak = 1;
-//     int currentStreak = 1;
-//     int modeCount = 1;
-//     double mode = data[0];
-
-//     // Iterate through the sorted array to find the mode(s)
-//     for (int i = 0; i < numVals - 1; i++) {
-//         if (data[i] == data[i + 1]) {
-//             currentStreak++;
-//         } else {
-//             currentStreak = 1;
-//         }
-
-//         if (currentStreak > maxStreak) {
-//             maxStreak = currentStreak;
-//             modeCount = 1;
-//             mode = data[i];
-//         } else if (currentStreak == maxStreak) {
-//             // If the current streak equals the maximum streak, consider it another mode
-//             modeCount++;
-//         }
-//     }
-
-//     // Check if all values occurred only once
-//     if (maxStreak == 1) {
-//         *numModes = 0;
-//         return NULL;
-//     }
-
-//     // Store the number of modes
-//     *numModes = modeCount;
-    
-//     // Allocate memory for the modes array
-//     double *modes = malloc(sizeof(double) * modeCount);
-//     // Check if memory allocation was successful
-//     if (modes == NULL) {
-//         perror("Error allocating memory");
-//         exit(1);
-//     }
-
-//     // Fill the modes array with the mode value
-//     for (int i = 0; i < modeCount; i++) {
-//         modes[i] = mode;
-//     }
-
-//     return modes;
-// }
-
 
 double* calculateMode(const double* data, int numVals, int* numModes) {
-    // Check if the dataset is empty or if all values are unique
-    if (numVals == 0 || allValuesUnique(data, numVals)) {
+    // Check if the dataset is empty
+    if (numVals == 0) {
         *numModes = 0;
-        return NULL; // No mode for an empty set or when all values are unique
+        return NULL; // No mode for an empty set
     }
 
     // Initialize variables for finding the mode(s)
-    int maxCount = 1;
-    int currentCount = 1;
-    double mode = data[0];
     int* counts = (int*)calloc(numVals, sizeof(int)); // Array to store counts of each value
 
-    // Count occurrences of each value
-    for (int i = 1; i < numVals; i++) {
-        if (data[i] == data[i - 1]) {
-            counts[i] = counts[i - 1] + 1;
-            currentCount = counts[i];
-        } else {
-            counts[i] = 1;
-            currentCount = 1;
-        }
+    if (counts == NULL) {
+        perror("Error allocating memory");
+        exit(EXIT_FAILURE);
+    }
 
-        if (currentCount > maxCount) {
-            maxCount = currentCount;
-            mode = data[i];
+    // Count occurrences of each value
+    int maxCount = 0;
+    for (int i = 0; i < numVals; i++) {
+        int count = 0;
+        for (int j = 0; j < numVals; j++) {
+            if (data[j] == data[i]) {
+                count++;
+            }
+        }
+        counts[i] = count;
+        if (count > maxCount) {
+            maxCount = count;
         }
     }
 
+    // Count the number of modes
+    int numModesCount = 0;
+    for (int i = 0; i < numVals; i++) {
+        if (counts[i] == maxCount) {
+            numModesCount++;
+        }
+    }
+
+    // Check if all frequencies are the same
+    bool sameFrequency = true;
+    for (int i = 1; i < numVals; i++) {
+        if (counts[i] != counts[0]) {
+            sameFrequency = false;
+            break;
+        }
+    }
+
+    if (sameFrequency) {
+        free(counts);
+        *numModes = 0;
+        return NULL;
+    }
+
     // Allocate memory for the modes array
-    double* modes = (double*)malloc(maxCount * sizeof(double));
+    double* modes = (double*)malloc(numModesCount * sizeof(double));
     if (modes == NULL) {
         perror("Error allocating memory");
         free(counts);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     // Fill the modes array with the mode value(s)
     int modeIndex = 0;
     for (int i = 0; i < numVals; i++) {
         if (counts[i] == maxCount) {
-            modes[modeIndex++] = data[i];
+            // Check if the mode already exists in the modes array
+            bool alreadyExists = false;
+            for (int j = 0; j < modeIndex; j++) {
+                if (modes[j] == data[i]) {
+                    alreadyExists = true;
+                    break;
+                }
+            }
+            if (!alreadyExists) {
+                modes[modeIndex++] = data[i];
+            }
         }
     }
 
@@ -278,6 +259,7 @@ double* calculateMode(const double* data, int numVals, int* numModes) {
     free(counts);
     return modes;
 }
+
 
 
 

@@ -14,3 +14,8 @@ To run the build file use below command:
 ./basicstats small.txt
 ./basicstats large.txt
 ```
+
+## Note:
+For mode calculation these assumption are made:
+1. If all the elements has same frequency then No mode found.
+2. If only one unique element found then No mode found.
