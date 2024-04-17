@@ -16,6 +16,6 @@ To run the build file use below command:
 ```
 
 ## Note:
-For mode calculation these assumption are made:
-1. If all the elements has same frequency then No mode found.
-2. If only one unique element found then No mode found.
+For mode calculation these assumptions are made:
+1. If all the elements have same frequency then No mode found.
+2. If input has one unique element with frequency one or more than one then No mode found.
